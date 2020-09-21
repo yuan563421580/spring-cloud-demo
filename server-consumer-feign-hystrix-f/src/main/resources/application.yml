@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: server-consumer-feign-hystrix-f
+server:
+  port: 9005
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    serviceUrl:
+      #Eureka的注册地址
+      #defaultZone: http:127.0.0.1:7001/eureka/
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/
+feign:
+  hystrix:
+    #开启熔断支持
+    enabled: true

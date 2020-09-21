@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: zuul-server
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 9627
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    serviceUrl:
+      # Eureka的注册地址
+      #defaultZone: http:127.0.0.1:7001/eureka/
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/
+zuul:
+  routes:
+    #没有提示，自己取名称，值为服务的名称
+    api-server-consumer-feign-hystrix-f:
+      # 以 /business 开头的请求都转发给 SERVER-PROVIDER 服务
+      path: /business/**  #匹配指定的路径，资源匹配的路径才会拦截，转发
+      serviceId: server-consumer-feign-hystrix-f
+  #忽略直接使用服务名 *忽略所有的服务
+  ignored-services: '*'
+  #统一给访问前缀
+  prefix: /api

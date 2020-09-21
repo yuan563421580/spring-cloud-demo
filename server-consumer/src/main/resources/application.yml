@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: server-consumer
+server:
+  port: 9001
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/

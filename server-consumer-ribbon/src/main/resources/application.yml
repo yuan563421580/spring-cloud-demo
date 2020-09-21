@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: server-consumer-ribbon
+server:
+  port: 9003
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    #禁止向eureka注册服务，因为它自己本身就是服务器
+    registerWithEureka: false
+    service-url:
+      #Eureka的注册地址
+      #defaultZone: http://127.0.0.1:7001/eureka
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/
