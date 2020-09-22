@@ -21,6 +21,7 @@
         <module>server-consumer-feign-hystrix-f</module>
         <module>config</module>
         <module>server-provider-config</module>
+        <module>server-consumer-config</module>
     </modules>
 
     <groupId>com.yuansb</groupId>
