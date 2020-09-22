@@ -1,6 +1,6 @@
 spring:
   application:
-    name: server-config-provider
+    name: server-provider-config
   main:
     allow-bean-definition-overriding: true
 server:
