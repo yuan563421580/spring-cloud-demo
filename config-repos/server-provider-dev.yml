@@ -1,3 +1,13 @@
-repos: repos version 1.0
-demo:
-  message: Hello Spring Cloud Config
+spring:
+  application:
+    name: server-provider
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8011
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/
