@@ -8,3 +8,7 @@
 八、创建服务消费者（负载均衡、熔断降级）模块：server-consumer-feign-hystrix
 九、创建服务消费者（负载均衡、熔断降级(后备工厂方式)）模块：server-consumer-feign-hystrix-f
 十、修改网关模块：zuul 
+十一、创建配置中心仓库文件夹：config-repos
+十二、创建配置中心模块：config
+十三、创建服务提供者模块，使用配置中心：server-provider-config
+十四、创建服务消费者（负载均衡、熔断降级）模块，使用配置中心：server-consumer-config

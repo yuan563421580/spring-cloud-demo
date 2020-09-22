@@ -77,7 +77,7 @@
     3.编写创建配置文件：application.yml 
         设置名称、端口、地址
         说明：需要指明 spring.application.name，这个很重要，这在以后的服务与服务之间相互调用一般都是根据这个 name
-    4.编写创建暴露服务实现类：ServerProviderController ， 实现简单测试逻辑
+    4.编写创建暴露服务实现类：ServerProviderController， 实现简单测试逻辑
     5.启动工程，进行本环节测试
         01).查看是否成功注册服务： http://127.0.0.1:7001 查看
             发现一个服务已经注册在服务中了，服务名为 SERVER-PROVIDER , 端口为 8001
@@ -369,5 +369,183 @@
             Hello Eureka, i am from port: 8002
         测试路径2：http://127.0.0.1:9627/server-consumer-feign-hystrix-f/consumer/feign/hi 查看
             返回结果正确 ： Whitelabel Error Page 
+十一、创建配置中心仓库文件夹：config-repos
+    1. 编写临时测试 server-provider-dev.yml 文件
+        repos: repos version 1.0
+        demo:
+          message: Hello Spring Cloud Config
+十二、创建配置中心模块：config
+    1.在pom.xml中配置Eureka客户端的依赖和配置中心依赖支持
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+            </dependency>
+            <!--Eureka的客户端的依赖-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            </dependency>
+            <!--配置中心依赖支持-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-config-server</artifactId>
+            </dependency>
+        </dependencies>
+    2.编写创建启动类：ServerConsumerFeignHystrixFApplication
+        通过注解 @EnableEurekaClient 表明自己是一个 Eureka Client
+        通过注解 @EnableConfigServer 启动配置中心服务
+    3.编写创建配置文件：application.yml
+        配置config仓库地址相关
+        spring:
+          cloud:
+            config:
+              label: master
+              server:
+                git:
+                  uri: https://github.com/yuan563421580/spring-cloud-demo.git
+                  search-paths: config-repos
+                  username: 563421580@qq.com
+                  password: 1411305034bo
+    4.启动工程，进行本环节测试
+        打开浏览器访问：http://127.0.0.1:8888/server-provider/dev , 查看
+            返回结果正确（临时测试编写的文件） ： 
+            propertySources: [
+                {
+                    name: "https://github.com/yuan563421580/spring-cloud-demo.git/config-repos/server-provider-dev.yml",
+                    source: {
+                        repos: "repos version 1.0",
+                        demo.message: "Hello Spring Cloud Config"
+                    }
+                }
+            ]
+        修改后均正确访问并返回结果
+            http://127.0.0.1:8888/server-provider/dev
+            http://127.0.0.1:8888/server-consumer/dev
+十三、创建服务提供者模块，使用配置中心：server-provider-config
+    1.在pom.xml中配置Eureka客户端的依赖和配置中心支持
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <!--Eureka客户端的依赖-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            </dependency>
+            <!--配置中心支持-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-config</artifactId>
+            </dependency>
+        </dependencies>
+    2.编写创建启动类：ServerProviderConfigApplication
+        通过注解 @EnableEurekaClient 表明自己是一个 Eureka Client
+    3.编写创建配置文件：bootstrap.yml
+        -说明：bootstrap相对于application具有优先执行的顺序
+        配置 eureka.client
+        配置 配置中心 相关
+            spring:
+              cloud:
+                config:
+                  #配置服务器
+                  uri: http://127.0.0.1:8888
+                  #分支
+                  label: master
+                  #github上面名称
+                  name: server-provider
+                  #环境
+                  profile: dev
+                  #如果连不上config 尝试重连， 最大6次
+                  #fail-fast: true 
+    4.编写创建暴露服务实现类（拷贝原有方法）：ServerProviderController， 实现简单测试逻辑
+    5.启动工程，进行本环节测试
+        01).查看是否成功注册服务： http://127.0.0.1:7001 查看
+            发现一个服务已经注册在服务中了，服务名为 SERVER-PROVIDER-CONFIG , 端口为 8011
+        02).测试服务实现类： http://127.0.0.1:8011/provider/hi 查看
+            返回结果正确 ： Hello Eureka, the provider with config, i am from port: 8011
+十四、创建服务消费者（负载均衡、熔断降级）模块，使用配置中心：server-consumer-config
+    说明：以 server-consumer-feign-hystrix 为基础新建模块改造
+    1.在pom.xml中配置Eureka客户端的依赖、Feign的依赖和配置中心支持
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+            </dependency>
+            <!--Eureka的客户端的依赖-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            </dependency>
+            <!--Feign的依赖-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+            </dependency>
+            <!--配置中心支持-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-config</artifactId>
+            </dependency>
+        </dependencies>
+    2.编写创建启动类：ServerConsumerConfigApplication
+        通过注解 @EnableEurekaClient 表明自己是一个 Eureka Client
+        通过注解 @EnableFeignClients 开启 Feign 功能
+    3.编写创建配置文件：bootstrap.yml
+        -说明：bootstrap相对于application具有优先执行的顺序
+        配置 eureka.client
+        配置 配置中心 相关
+            spring:
+              cloud:
+                config:
+                  #配置服务器
+                  uri: http://127.0.0.1:8888
+                  #分支
+                  label: master
+                  #github上面名称
+                  name: server-consumer
+                  #环境
+                  profile: dev
+                  #如果连不上config 尝试重连， 最大6次
+                  #fail-fast: true
+    4.在 service 文件夹下创建接口 : ConsumeFeignClient
+        通过注解 @FeignClient(value = "SERVER-PROVIDER", fallback = ConsumeFeignFallback.class)
+            实现对 server-provider 的调用 和 熔断机制处理
+            value = "SERVER-PROVIDER" 为 要调用的服务名称
+            fallback = ConsumeFeignFallback.class 为 熔断实现类
+    5.在 fallback 文件夹下创建实现类 : ConsumeFeignFallback
+        继承接口 ConsumeFeignClient , 请求失败或超时或异常则会触发熔断并返回一个固定结果
+        完成该步骤后修改 ConsumeFeignClient 的 @FeignClient 注解，增加 fallback = ConsumeFeignFallback.class
+         -说明：4 和 5 说明：4和5实现的顺序是交叉的，
+            因为步骤5 ConsumeFeignFallback 需要继承 ConsumeFeignClient
+            同时步骤4 fallback = ConsumeFeignFallback.class 需要步骤5 创建实现
+    6.编写创建消费接口实现类：ConsumeFeignController
+         通过 ConsumeFeignClient 调用 实现
+    7.启动工程，进行本环节测试
+        启动报错：to {GET /provider/hi}: There is already 'consumeFeignFallback' bean method
+            查询是因为使用服务降级不要在接口 ConsumeFeignClient 使用 @RequestMapping , 直接在 @GetMapping 中补全路径
+        重启成功，打开浏览器访问：http://127.0.0.1:9114/consumer/feign/hi ， 查看 
+            刷新2次，返回结果正确（负载均衡测试通过） ： 
+                Hello Eureka, the provider with config, i am from port: 8011
+                Hello Eureka, the provider with config, i am from port: 8012
+            访问：http://127.0.0.1:9114/consumer/feign/testNum/0，返回结果正确（熔断降级测试通过） ： 
+                请求失败了，请重试...!
+            关闭 server-provider-config 后刷浏览器，返回结果正确（熔断降级测试通过） ： 
+                请求失败了，请重试...!
+    8.补充说明：使用熔断降级，一定不要在服务消费者调用类上使用 @RequestMapping 注释，
+                否则会报错误： There is already 'consumeFeignFallback' bean method
 ----------------------------            
 com.yuansb.spring.cloud.demo
