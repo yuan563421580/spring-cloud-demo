@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    config:
+      #配置服务器
+      uri: http://127.0.0.1:8888
+      #分支
+      label: master
+      #github上面名称
+      name: server-provider
+      #环境
+      profile: dev
+      #如果连不上config 尝试重连， 最大6次
+      #fail-fast: true
+eureka:
+  client:
+    instance:
+      hostname: 127.0.0.1
+    service-url:
+      #告诉服务提供者要把服务注册到哪儿
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/
+  instance:
+    #显示客户端真实ip
+    prefer-ip-address: true
