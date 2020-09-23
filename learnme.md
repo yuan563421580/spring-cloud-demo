@@ -2,8 +2,9 @@
     spring cloud实例Dome详细搭建 ： https://blog.csdn.net/qq_44575680/article/details/90290092
     实际使用的时候可以优化相关模块开发顺序。可能后续在文章中进行相关顺序调整。
 一、创建工程spring-cloud-demo
-    1.在pom.xml中设置父类工程为pom方式 : <packaging>pom</packaging>
-    2.在pom.xml中配置 spring cloud 和 springboot 的统一版本
+    1.删除 src 文件夹
+    2.在pom.xml中设置父类工程为pom方式 : <packaging>pom</packaging>
+    3.在pom.xml中配置 spring cloud 和 springboot 的统一版本
         <properties>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -177,7 +178,7 @@
         </dependencies>
     2.编写创建启动类：ServerConsumerFeignApplication
         通过注解 @EnableEurekaClient 表明自己是一个 Eureka Client
-        通过注解 @EnableEurekaClient 开启 Feign 功能
+        通过注解 @EnableFeignClients 开启 Feign 功能
     3.编写创建配置文件：application.yml
         配置 eureka.client 
     4.在service文件夹下创建接口 : ConsumeFeignClient
