@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 启动类
  *
  * 通过注解 @EnableEurekaClient 表明自己是一个 Eureka Client
- * 通过注解 @EnableEurekaClient 开启 Feign 功能
+ * 通过注解 @EnableFeignClients 开启 Feign 功能
  *      @EnableFeignClients("com.yuansb.spring.cloud.demo.service")  //Feign 接口的地址
  *
  */
