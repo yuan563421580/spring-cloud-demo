@@ -10,8 +10,8 @@ spring:
         git:
           uri: https://github.com/yuan563421580/spring-cloud-demo.git
           search-paths: config-repos
-          username: 563421580@qq.com
-          password: 1411305034bo
+          username: MyUserName
+          password: MyPassword
 server:
   port: 8888
 eureka:

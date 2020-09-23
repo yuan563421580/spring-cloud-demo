@@ -410,8 +410,8 @@
                 git:
                   uri: https://github.com/yuan563421580/spring-cloud-demo.git
                   search-paths: config-repos
-                  username: 563421580@qq.com
-                  password: 1411305034bo
+                  username: MyUserName
+                  password: MyPassword
     4.启动工程，进行本环节测试
         打开浏览器访问：http://127.0.0.1:8888/server-provider/dev , 查看
             返回结果正确（临时测试编写的文件） ： 
