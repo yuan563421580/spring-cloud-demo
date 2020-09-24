@@ -548,5 +548,29 @@
                 请求失败了，请重试...!
     8.补充说明：使用熔断降级，一定不要在服务消费者调用类上使用 @RequestMapping 注释，
                 否则会报错误： There is already 'consumeFeignFallback' bean method
+十五、修改网关模块：zuul 
+     本次主要是 配置多个路由服务 ， 新增加服务 api-server-consumer-config
+     1.将 application.yml 修改
+         zuul:
+           routes:
+             #没有提示，自己取名称，值为服务的名称
+             api-server-consumer-feign-hystrix-f:
+               # 以 /business 开头的请求都转发给 SERVER-CONSUMER-FEIGN-HYSTRIX-F 服务
+               path: /business/**  #匹配指定的路径，资源匹配的路径才会拦截，转发
+               serviceId: server-consumer-feign-hystrix-f
+             api-server-consumer-config:
+               # 以 /bConfig 开头的请求都转发给 server-consumer-config 服务
+               path: /bConfig/**  #匹配指定的路径，资源匹配的路径才会拦截，转发
+               serviceId: server-consumer-config
+     2.启动工程，进行本环节测试
+        1).测试路径1：http://127.0.0.1:9627/api/business/consumer/feign/hi , 查看
+           刷新2次，返回结果正确（负载均衡测试通过） ： 
+                Hello Eureka, i am from port: 8001
+                Hello Eureka, i am from port: 8002
+        2).测试路径2：http://127.0.0.1:9627/server-consumer-feign-hystrix-f/consumer/feign/hi 查看
+           返回结果正确 ： Whitelabel Error Page 
+        3).测试路径3：http://127.0.0.1:9627/api/bConfig/consumer/feign/hi , 查看
+           返回结果正确 ： Hello Eureka, the provider with config, i am from port: 8012
+        -配置多个路由服务操作成功   
 ----------------------------            
 com.yuansb.spring.cloud.demo

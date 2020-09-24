@@ -17,9 +17,13 @@ zuul:
   routes:
     #没有提示，自己取名称，值为服务的名称
     api-server-consumer-feign-hystrix-f:
-      # 以 /business 开头的请求都转发给 SERVER-PROVIDER 服务
+      # 以 /business 开头的请求都转发给 SERVER-CONSUMER-FEIGN-HYSTRIX-F 服务
       path: /business/**  #匹配指定的路径，资源匹配的路径才会拦截，转发
       serviceId: server-consumer-feign-hystrix-f
+    api-server-consumer-config:
+      # 以 /bConfig 开头的请求都转发给 server-consumer-config 服务
+      path: /bConfig/**  #匹配指定的路径，资源匹配的路径才会拦截，转发
+      serviceId: server-consumer-config
   #忽略直接使用服务名 *忽略所有的服务
   ignored-services: '*'
   #统一给访问前缀
